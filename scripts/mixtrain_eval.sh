@@ -19,10 +19,11 @@ export WANDB_ENTITY="Omni-Mol"
 export WANDB_PROJECT="${WANDB_ENTITY}_${PROMPT_VERSION}"
 export WANDB_API_KEY="ba70fcbc92808cc7a1750dd80ac3908295e6854f"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
-
+export HUGGINGFACE_HUB_TOKEN="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"
 
 echo "========== Start Training =========="
 deepspeed --master_port 29505 train.py \
+    --deepspeed scripts/zero_configs/zero2.json \
     --training_recipe loramoe \
     --use_alpha True \
     --task_config $TASK \
@@ -39,8 +40,8 @@ deepspeed --master_port 29505 train.py \
     --bf16 True \
     --output_dir $CHECKPOINT_FOLDER_PREFIX/$MODEL_VERSION-$REMARK \
     --num_train_epochs 15 \
-    --per_device_train_batch_size 12 \
-    --per_device_eval_batch_size 12 \
+    --per_device_train_batch_size 18 \
+    --per_device_eval_batch_size 18 \
     --gradient_accumulation_steps 1 \
     --stop_epoch 15 \
     --eval_strategy "no" \
