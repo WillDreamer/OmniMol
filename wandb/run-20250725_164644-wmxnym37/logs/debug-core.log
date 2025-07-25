@@ -1,6 +1,0 @@
-{"time":"2025-07-25T16:46:44.194355467+08:00","level":"INFO","msg":"main: starting server","port-filename":"/tmp/tmpq9vfxfee/port-8453.txt","pid":8453,"log-level":0,"disable-analytics":false,"shutdown-on-parent-exit":false}
-{"time":"2025-07-25T16:46:44.204566227+08:00","level":"INFO","msg":"Will exit if parent process dies.","ppid":8453}
-{"time":"2025-07-25T16:46:44.204675047+08:00","level":"INFO","msg":"server is running","addr":{"IP":"127.0.0.1","Port":41383,"Zone":""}}
-{"time":"2025-07-25T16:46:44.339741467+08:00","level":"INFO","msg":"connection: ManageConnectionData: new connection created","id":"127.0.0.1:47392"}
-{"time":"2025-07-25T16:46:44.362144822+08:00","level":"INFO","msg":"handleInformInit: received","streamId":"wmxnym37","id":"127.0.0.1:47392"}
-{"time":"2025-07-25T16:46:44.489986968+08:00","level":"INFO","msg":"handleInformInit: stream started","streamId":"wmxnym37","id":"127.0.0.1:47392"}
