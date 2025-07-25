@@ -15,6 +15,11 @@ import model_factory
 import pathlib
 import wandb
 
+
+os.environ["NCCL_DEBUG"] = "INFO"
+os.environ["NCCL_SOCKET_IFNAME"] = "eth0"   # ⚠️ 改成你实际的主网卡
+os.environ["NCCL_IB_DISABLE"] = "1"
+
 logger = WrappedLogger(__name__)
 
 def parse_args() -> tuple[ModelArguments, DataArguments, TrainingArguments]:

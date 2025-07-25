@@ -58,7 +58,10 @@ main() {
 
     conda install -c conda-forge mpi4py openmpi -y
     pip install -r requirements.txt
-    git submodule add https://github.com/huggingface/peft.git peft
+    
+    cd peft
+    pip install -e .
+    cd ..
     pip install torch-scatter==2.1.2
     pip install flash-attn==2.5.0
     

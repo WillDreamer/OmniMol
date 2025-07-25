@@ -19,6 +19,7 @@ export WANDB_ENTITY="Omni-Mol"
 export WANDB_PROJECT="${WANDB_ENTITY}_${PROMPT_VERSION}"
 export WANDB_API_KEY="ba70fcbc92808cc7a1750dd80ac3908295e6854f"
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+export HUGGINGFACE_HUB_TOKEN="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"
 
 echo "========== Start Training =========="
 deepspeed --master_port 29505 train.py \
