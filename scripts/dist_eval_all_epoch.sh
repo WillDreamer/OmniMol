@@ -18,6 +18,7 @@ TEMPERATURE=0.2
 REPETITION_PENALTY=1.0
 ADD_SELFIES=True
 IS_TRAINING=False
+SEED=42
 
 # ------------------------
 # ******可变 epoch 和 checkpoint 列表********
@@ -54,8 +55,8 @@ for i in "${!EPOCH_LIST[@]}"; do
     EPOCH=${EPOCH_LIST[$i]}
     CKPT=${CHECKPOINT_LIST[$i]}
 
-    BASE_REMARK="llama-1B-deepseek-moe-5EP-qurater-sharedEP-clip-alpha-embed-Tok2-16tasks-Epoch${EPOCH}"
-    MODEL_BASE_PATH="/wanghaixin/OmniMol/_checkpoints/moe/llama-1B-deepseek-moe-5EP-qurater-sharedEP-clip-alpha-embed-Tok2-16tasks/checkpoint-${CKPT}"
+    BASE_REMARK="llama-1B-deepseek-moe-5EP-qurater-sharedEP-clip-alpha-embed-Tok2-16tasks-seed${SEED}-temp${TEMPERATURE}-Epoch${EPOCH}"
+    MODEL_BASE_PATH="_checkpoints/moe/llama-1B-deepseek-moe-5EP-qurater-sharedEP-clip-alpha-embed-Tok2-16tasks/checkpoint-${CKPT}"
 
     for TASK in "${TASK_LIST[@]}"; do
         case "$TASK" in
@@ -120,6 +121,7 @@ for i in "${!EPOCH_LIST[@]}"; do
             --is_training "$IS_TRAINING" \
             --max_new_tokens "$MAX_NEW_TOKENS" \
             --repetition_penalty "$REPETITION_PENALTY" \
+            --seed "$SEED"
 
         echo "Finish TASK: $TASK"
         echo
