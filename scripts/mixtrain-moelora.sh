@@ -28,7 +28,6 @@ deepspeed --master_port 29505 train.py \
     --language_backbone_name $MODEL_VERSION \
     --version $PROMPT_VERSION \
     --data_path data/train \
-    --remove_unused_columns False \
     --data_type $TASK \
     --graph_tower $GRAPH_TOWER \
     --mm_projector_type $PROJECTOR \
