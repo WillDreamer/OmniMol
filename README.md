@@ -93,11 +93,6 @@ If you have multiple GPUs, we support distributed inference
 bash scripts/dist_eval.sh
 ```
 
-## Code Base
-We believe a clean, readable and well-commented code can benefit the community, the design of this code base follows this rule, where we provide detailed annotations and simple/efficient code implementation.
-
-The original code base follows LLaVA(https://github.com/haotian-liu/LLaVA.git) and InstructMol(https://github.com/IDEA-XL/InstructMol.git). But we optimized a lot and achieved better efficiency(less VRAM and faster training speed).
-
 ## Citation
 ```bibtex
 @misc{hu2025omnimol,
