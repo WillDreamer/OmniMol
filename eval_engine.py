@@ -1,5 +1,5 @@
 from model_factory import load_lora_model, load_moe_lora_model,load_moe_lora_model_sequential,load_partial_model,load_pure_text_model
-from transformers import HfArgumentParser, GenerationConfig, PreTrainedTokenizer
+from transformers import HfArgumentParser, GenerationConfig, PreTrainedTokenizer, set_seed
 from dataclasses import dataclass, field
 from pathlib import Path
 import time
@@ -103,6 +103,7 @@ class EvalArguments:
     inference_on_train: bool = field(default=False)
     local_rank: int=field(default=-1)
     if_smiles: bool = field(default=False)
+    seed: int = field(default=42)
     
     
 @dataclass       
@@ -321,6 +322,7 @@ def start_eval(args: EvalArguments):
 if __name__ == "__main__":
     parser = HfArgumentParser((EvalArguments))
     args = parser.parse_args_into_dataclasses()[0]
+    set_seed(args.seed)
     assert args.batch_size == 1, "Batched evaluation is under development!"
 
 
