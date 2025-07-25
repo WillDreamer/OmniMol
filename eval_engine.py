@@ -1,4 +1,4 @@
-from model_factory import load_lora_model, load_moe_lora_model,load_moe_lora_model_sequential,load_partial_model
+from model_factory import load_lora_model, load_moe_lora_model,load_moe_lora_model_sequential,load_partial_model,load_pure_text_model
 from transformers import HfArgumentParser, GenerationConfig, PreTrainedTokenizer
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -65,7 +65,7 @@ MODEL_LOADER_MAP = {
     "lora+moe": load_moe_lora_model,
     "sequential": load_moe_lora_model_sequential,
     "partial":load_partial_model,
-    
+    "puretext": load_pure_text_model
 }
 
 DTYPE_MAP = {

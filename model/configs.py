@@ -156,3 +156,50 @@ class GraphLlavaConfig(PretrainedConfig):
         self.moe_config = moe_config
 
         super().__init__(**kwargs)
+        
+        
+class PureTextConfig(PretrainedConfig):
+    model_type = "pure_text"
+    is_composition = False
+
+    def __init__(
+        self,
+        text_config=None,
+        moe_config=None,
+        language_backbone_name=None,
+        ignore_index=-100,
+        image_token_index=-200,
+        projector_hidden_act="gelu",
+        moe_enable=False,
+        projector_type="naive_linear",
+        projector_aux_loss_coeff=0.01,
+        enable_task_embed=False,
+        num_task=5,
+        enable_apple_loss=False,
+        task_loss_coeff=0.01,
+        norm_topk_prob: bool=None,
+        **kwargs,
+    ):
+        self.ignore_index = ignore_index
+        self.image_token_index = image_token_index
+        self.projector_hidden_act = projector_hidden_act
+        self.moe_enable=moe_enable
+        self.language_backbone_name=language_backbone_name
+        self.projector_type = projector_type
+        self.enable_task_embed = enable_task_embed
+        self.num_task = num_task
+        self.enable_apple_loss = enable_apple_loss
+        self.task_loss_coeff = task_loss_coeff
+        self.norm_topk_prob = norm_topk_prob
+            
+        if isinstance(text_config, dict):
+            text_config = MODEL_CONF_MAP[language_backbone_name](**text_config)
+            
+        if isinstance(moe_config, dict):
+            moe_config = MoEConfig(**moe_config)
+            
+        self.projector_aux_loss_coeff = projector_aux_loss_coeff
+        self.text_config = text_config
+        self.moe_config = moe_config
+
+        super().__init__(**kwargs)

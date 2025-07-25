@@ -1,10 +1,11 @@
 from args import TrainingArguments, ModelArguments, DataArguments
 from transformers import PreTrainedModel, PreTrainedTokenizer
 from transformers import AutoConfig 
-from transformers import AutoTokenizer
-from model.configs import GraphConfig, GraphLlavaConfig, MoEConfig, ProjectorConfig
+from transformers import AutoTokenizer, AutoModelForCausalLM
+from model.configs import GraphConfig, GraphLlavaConfig, MoEConfig, ProjectorConfig, PureTextConfig
 from model.modeling_llava import GraphLlavaForConditionalGeneration
 from model.modeling_moe import DeepseekV2MoE
+from model.modeling_textmodel import TextModelForConditionalGeneration
 from helpers import no_init_weights
 from data_pipe import conversation_lib
 import torch
@@ -508,6 +509,96 @@ def create_lora_moe_model(model_args: ModelArguments, training_args: TrainingArg
     # model.language_model.lm_head.requires_grad_(True)   
     return tokenizer, model
 
+def create_puer_text_model(model_args: ModelArguments, training_args: TrainingArguments) -> tuple[PreTrainedTokenizer, PreTrainedModel]:
+    # 1. Init all configs
+    # default override to torch.bfloat16 for flash attention
+    text_config = AutoConfig.from_pretrained(
+        model_args.base_model,
+        attn_implementation="flash_attention_2",
+        torch_dtype=torch.bfloat16,
+        )
+    config = PureTextConfig(
+        text_config, 
+        moe_enable=model_args.moe_enable,
+        language_backbone_name=model_args.language_backbone_name,
+        enable_apple_loss=model_args.enable_apple_loss
+    )
+    config.use_cache = False
+    text_config.use_cache = False
+    # 2. Instantiate tokenizer, model
+    tokenizer = AutoTokenizer.from_pretrained(model_args.base_model)
+    
+    with no_init_weights():
+        model = TextModelForConditionalGeneration(config)
+        
+    # 3. Load pre-trained LLM
+    model.load_language_model()
+    
+    # 4. create moe model
+    moe_config = MoEConfig(
+        moe_mode = model_args.moe_mode,
+        moe_layers_idx=model_args.moe_layers_idx,
+        ep_size=model_args.ep_size,
+        num_experts=model_args.num_experts,
+        top_k_experts=model_args.top_k_experts,
+        capacity_factor=model_args.capacity_factor,
+        eval_capacity_factor=model_args.eval_capacity_factor,
+        min_capacity=model_args.min_capacity,
+        use_residual=model_args.use_residual,
+        router_aux_loss_coef=model_args.router_aux_loss_coef,
+        moe_class=model_args.moe_class,
+        norm_topk_prob=model_args.norm_topk_prob
+    )
+    
+    model.config.moe_enable = True,
+    model.config.text_config.moe_enable = True
+    model.config.moe_config = moe_config
+    training_args.moe_enable = model_args.moe_enable = True
+    
+    if torch.cuda.is_available():
+        logger.info("Moving to CUDA for faster creation", on_rank0=True)
+        model.to("cuda")
+        
+    model.replace_mlp_with_moe()
+    model.to("cpu")
+    torch.cuda.empty_cache()
+    
+    # 5. Apply LoRA
+    # import lora related functions
+    from peft import LoraConfig, get_peft_model
+    lora_config = LoraConfig(  # initailize a LoRA Config
+        r=training_args.lora_r,
+        lora_alpha=training_args.lora_alpha,
+        target_modules=find_linear_without_moe_gates(model),  # do not add lora to any MoE layers, but any layer except that
+        use_rslora=training_args.use_rslora,
+        use_learnable_alpha=training_args.use_alpha,
+        lora_dropout=training_args.lora_dropout,
+        bias=training_args.lora_bias,
+        task_type="CAUSAL_LM",
+    )
+    if torch.cuda.is_available():
+        logger.info("Moving to cuda for faster warping...", on_rank0=True)
+        model.to("cuda")
+        
+    logger.info("Adding LoRA adapters...", on_rank0=True)
+    model = get_peft_model(model, lora_config)  # add lora according to lora_config
+    training_args.lora_enable = True
+    model.to("cpu")
+    
+    # 6. activate moe gate
+    for name, module in model.named_modules():
+        if 'moe_gate' in name:
+            module.requires_grad_(True)
+    
+    # 6. set all moe layers active
+    # for name, module in model.named_modules():
+    #     if isinstance(module, (MoE, DeepseekV2MoE)):
+    #         module.requires_grad_(True)
+    # model.language_model.lm_head.requires_grad_(True)   
+    model.enable_input_require_grads()
+    return tokenizer, model
+    
+
 
 def load_lora_model(
     model_path: str,
@@ -743,6 +834,73 @@ def load_partial_model(
     model.load_state_dict(trainables, strict=False)
         
     return tokenizer, model
+
+def load_pure_text_model(
+    model_path: str,
+    language_backbone: str,
+    graph_path: str,
+    use_flash_attn: bool,
+    task_embed_path: str = None,
+    **kwargs
+) -> tuple[PreTrainedTokenizer, GraphLlavaForConditionalGeneration]:
+    # 1. Build base language model
+    config = PureTextConfig.from_pretrained(model_path)
+    if use_flash_attn:
+        config._attn_implementation = "flash_attention_2"
+        config.text_config._attn_implementation = "flash_attention_2"
+    with no_init_weights():
+        model = TextModelForConditionalGeneration(config)
+        
+    tokenizer = AutoTokenizer.from_pretrained(language_backbone)
+    model.load_language_model()
+    
+    # 2. Expand to MoE
+    logger.info("Moving to CUDA")
+    model.to(torch.device("cuda"))
+    model.replace_mlp_with_moe()
+    logger.info("Moving back to CPU")
+    model.to(torch.device("cpu"))
+    
+    # 3. Load MoE and projctor weights
+    logger.info('Loading additional LLaVA weights...')
+    if os.path.exists(os.path.join(model_path, 'non_lora_trainables.bin')):
+        non_lora_trainables = torch.load(
+            os.path.join(model_path, 'non_lora_trainables.bin'), map_location='cpu')
+        logger.info(f"Non-lora trainables: {non_lora_trainables.keys()}", on_rank0=True)
+    else:
+        logger.info("No Non-lora weights detected!")
+        raise NotImplementedError
+    non_lora_state_dict = {k.split("base_model.model.")[1]: v for k, v in non_lora_trainables.items()}
+    
+    model.load_state_dict(non_lora_state_dict, strict=False)
+    
+    # 4. load and merge lora
+    from peft import PeftModel
+    logger.info('Loading LoRA weights...')
+    model = PeftModel.from_pretrained(model, model_path)
+    logger.info("Moving to CUDA")
+    model.to(torch.device("cuda"))
+    logger.info('Merging LoRA weights...')
+    model = model.merge_and_unload()
+    logger.info("Moving back to CPU")
+    model.to(torch.device("cpu"))
+    logger.info('Model is loaded...')
+    torch.cuda.empty_cache()
+
+    # 5. deepspeed engine
+    if any(isinstance(module, MoE) for _, module in model.named_modules()):
+        import deepspeed
+        deepspeed.init_distributed(dist_backend='nccl')
+        # Initialize the DeepSpeed-Inference engine
+        ds_engine = deepspeed.init_inference(model,
+                                                # mp_size=2,
+                                                # dtype=torch.half,
+                                                checkpoint=None,
+                                                replace_with_kernel_inject=False)
+        model = ds_engine.module
+        
+    return tokenizer, model
+    
     
 MODEL_STAGE_MAP = {
     "stage1": create_stage1_model,
@@ -750,7 +908,8 @@ MODEL_STAGE_MAP = {
     "lora": create_lora_model,
     "moe+lora": create_moe_lora_model,  #### pure moe
     "loramoe": create_lora_moe_model,  ##### moe with lora
-    "sequential": load_moe_lora_model_sequential
+    "sequential": load_moe_lora_model_sequential,
+    "puretext": create_puer_text_model  # pure text model
 }
 
 def create_model(
