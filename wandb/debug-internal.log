@@ -1,0 +1,6 @@
+{"time":"2025-07-25T17:02:38.896862362+08:00","level":"INFO","msg":"stream: starting","core version":"0.19.4","symlink path":"/root/autodl-tmp/omnimol-neurips/wandb/run-20250725_170238-vw7w9zty/logs/debug-core.log"}
+{"time":"2025-07-25T17:02:39.021156126+08:00","level":"INFO","msg":"created new stream","id":"vw7w9zty"}
+{"time":"2025-07-25T17:02:39.021212124+08:00","level":"INFO","msg":"stream: started","id":"vw7w9zty"}
+{"time":"2025-07-25T17:02:39.021319377+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"vw7w9zty"}
+{"time":"2025-07-25T17:02:39.021421613+08:00","level":"INFO","msg":"sender: started","stream_id":"vw7w9zty"}
+{"time":"2025-07-25T17:02:39.021580028+08:00","level":"INFO","msg":"handler: started","stream_id":"vw7w9zty"}
