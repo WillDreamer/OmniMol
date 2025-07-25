@@ -9,6 +9,15 @@ Code release for paper *Omni-Mol: Exploring Universal Convergent Space for Omni-
 Building generalist models has recently demonstrated remarkable capabilities in diverse scientific domains. Within the realm of molecular learning, several studies have explored unifying diverse tasks across diverse domains. However, negative conflicts and interference between molecules and knowledge from different domain may have a worse impact in threefold. First, conflicting molecular representations can lead to optimization difficulties for the models. Second, mixing and scaling up training data across diverse tasks is inherently challenging. Third, the computational cost of refined pretraining is prohibitively high. To address these limitations, we present Omni-Mol, a scalable and unified LLM-based framework for direct instruction tuning Omni-Mol builds on three key components to tackles conflicts: (1) a unified encoding mechanism for any task input; (2) an active-learning driven data selection strategy that significantly reduces dataset size; (3) a novel design of the adaptive gradient stabilization module and anchor-and-reconcile MoE framework that ensures stable convergence. Experimentally, Omni-Mol achieves state-of-the-art performance across 15 molecular tasks, demonstrates the presence of scaling laws in the molecular domain, and is supported by extensive ablation studies and analyses validating the effectiveness of its design.
 
 ## Release
+
+- [ ] OOD任务选取
+- [ ] 去掉AGI-Clip
+- [ ] AGI不同rank
+- [ ] 8个task的baseline
+- [ ] 自动化测试脚本
+- [x] 纯text训练开发
+- [x] 环境一键配置
+
 [2025/2/8] 🔥 We release our first version of code
 
 ## Environment Setup
