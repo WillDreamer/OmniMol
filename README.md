@@ -79,7 +79,7 @@ Please refer to `args.py` for detailed parameter explanation.
 
 ### Stage 2 MoE + PEFT
 ```bash 
-bash scripts/moe/llama3.2-1b/mixtrain-moelora.sh
+bash scripts/mixtrain-moelora.sh
 ```
 
 ## Evaluation
