@@ -28,7 +28,7 @@ git clone https://github.com/WillDreamer/OmniMol.git
 
 cd OmniMol
 ```
-2. Environment Settings:
+2. (Optional) Environment Settings:
 
 ```bash
 # Download the Miniconda installer script
@@ -50,8 +50,12 @@ conda init
 # Reload shell config
 source ~/.bashrc
 ```
+or
+```bash
+bash setup_conda.sh
+```
 
-3. Install package through 
+3. Install package of OmniMol through 
 ```bash
 bash setup_omnimol.sh
 ```
