@@ -16,3 +16,6 @@ conda init
 
 # Reload shell config
 source ~/.bashrc
+
+# Activate conda (only in the current shell)
+eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
