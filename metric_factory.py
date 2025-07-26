@@ -129,7 +129,7 @@ def calc_fingerprints(input_file: str, save_path=None, morgan_r: int=2, eos_toke
             combined_data = [new_metrics]
         save_json(combined_data, save_path)
         
-    return validity_score, maccs_sims_score, rdk_sims_score, morgan_sims_score
+    return new_metrics
         
         
 def calc_mol_trans(input_file, metric_path=None, eos_token='<|end|>'):
@@ -185,6 +185,8 @@ def calc_mol_trans(input_file, metric_path=None, eos_token='<|end|>'):
     ]
     if metric_path is not None:
         save_json(metrics_list, metric_path)
+    
+    return metrics_list
 
 
 def compute_mae(eval_result_file: str, metric_path: str, eos_token: str):
@@ -254,6 +256,8 @@ def compute_mae(eval_result_file: str, metric_path: str, eos_token: str):
     with open(metric_path, 'w', encoding='utf-8') as f:
         json.dump(metrics_list, f, indent=4, ensure_ascii=False)
         f.close()
+        
+    return metrics_list
 
 
 def compute_extracted_mae(eval_result_file: str, metric_path: str, eos_token: str):
@@ -311,6 +315,8 @@ def compute_extracted_mae(eval_result_file: str, metric_path: str, eos_token: st
     with open(metric_path, 'w', encoding='utf-8') as f:
         json.dump(metrics_list, f, indent=4, ensure_ascii=False)
         f.close()
+        
+    return metrics_list
 
 
 def compute_extracted_SCF_mae(eval_result_file: str, metric_path: str, eos_token: str, max_examples=5):
@@ -508,6 +514,8 @@ def compute_r2(eval_result_file: str, metric_path, eos_token):
     with open(metric_path, 'w', encoding='utf-8') as f:
         json.dump(metrics_list, f, indent=4, ensure_ascii=False)
         f.close()
+    
+    return metrics_list
 
 
 def calc_mocap_metrics(input_file, metric_path, eos_token, tokenizer: PreTrainedTokenizer):
