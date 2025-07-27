@@ -122,7 +122,10 @@ def parse_args():
 
 
 def get_all_ckpts(save_path: str, eval_all_epochs: bool):
-    saved_ckpts = os.listdir(save_path)
+    saved_ckpts = [
+        d for d in os.listdir(save_path)
+        if os.path.isdir(os.path.join(save_path, d))
+    ]
     saved_ckpts.sort(key=lambda x:x.split("checkpoint-")[1])
     if not eval_all_epochs:
         saved_ckpts = [saved_ckpts[0]]
