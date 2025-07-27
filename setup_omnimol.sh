@@ -27,6 +27,7 @@ check_conda() {
             return 0
         else
             return 1
+        fi
     fi
 }
 
