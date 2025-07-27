@@ -373,7 +373,7 @@ def start_eval(args):
                 )
                 for metric in result:
                     if accelerator.is_main_process:
-                        wandb.log({f"{task_name}/{k}": v for k, v in metric.items()}, step=ckpt.split("checkpoint-")[1])    
+                        wandb.log({f"{task_name}/{k}": v for k, v in metric.items()}, step=int(ckpt.split("checkpoint-")[1]))    
                 
             accelerator.wait_for_everyone()
     
