@@ -8,11 +8,11 @@ accelerate launch auto_eval.py \
     --metric_path True \
     --model_type lora+moe \
     --prompt_version llama3 \
-    --model_path /root/autodl-tmp/omnimol-neurips/ckpt-omnimol \
-    --language_backbone ~/WDHDD2TB/ckpts/downloads/LLM/Llama-3.2-1B-Instruct \
-    --graph_path /root/autodl-tmp/omnimol-neurips/moleculestm.pth \
+    --model_path _checkpoints \
+    --language_backbone meta-llama/Llama-3.2-1B-Instruct \
+    --graph_path assets/moleculestm.pth \
     --use_flash_attn True \
     --task_embed False \
     --dtype bfloat16 \
-    --data_path /root/autodl-tmp/omnimol-neurips/evaluate \
+    --data_path data/evaluate \
     --add_selfies True \
