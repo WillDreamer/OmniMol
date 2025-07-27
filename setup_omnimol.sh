@@ -68,6 +68,8 @@ main() {
     
     pip install torch-scatter==2.1.2
     pip install flash-attn==2.5.0
+
+    sudo apt install -y tmux
     
     # Install PyTorch with CUDA if available
     if check_cuda; then
