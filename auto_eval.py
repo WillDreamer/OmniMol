@@ -302,7 +302,7 @@ def calc_metrics(tokenizer, task, output_path, metric_path, prompt_version):
     
 @torch.inference_mode
 def start_eval(args):
-    wandb.init(name=f"Omni-Mol-eval-{args.model_path}", project="Omni-Mol")
+    wandb.init(name=f"{args.model_path}", project="Omni-Mol-eval")
     all_ckpts = get_all_ckpts(args.model_path, args.eval_all_epochs)
     for ckpt in all_ckpts:
         logger.info("****************************")
