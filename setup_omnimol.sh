@@ -21,7 +21,12 @@ check_conda() {
         return 0
     else
         echo "Conda is not installed. Please install Conda first."
-        return 1
+        eval "$($HOME/miniconda3/bin/conda shell.bash hook)"
+        if command -v conda &> /dev/null; then
+            echo "Conda is available"
+            return 0
+        else
+            return 1
     fi
 }
 
