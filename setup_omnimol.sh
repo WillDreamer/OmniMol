@@ -65,6 +65,10 @@ main() {
     pip install -r requirements.txt
     
     git submodule update --init --recursive
+
+    cd peft
+    pip install -e .
+    cd ..
     
     pip install torch-scatter==2.1.2
     pip install flash-attn==2.5.0
