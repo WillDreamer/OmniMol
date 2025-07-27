@@ -94,7 +94,7 @@ accelerate launch --main_process_port 29533 auto_eval.py \
     --metric_path True \
     --model_type lora+moe \
     --prompt_version llama3 \
-    --model_path _checkpoints \
+    --model_path $CHECKPOINT_FOLDER_PREFIX/$MODEL_VERSION-$REMARK \
     --language_backbone meta-llama/Llama-3.2-1B-Instruct \
     --graph_path assets/moleculestm.pth \
     --use_flash_attn True \
