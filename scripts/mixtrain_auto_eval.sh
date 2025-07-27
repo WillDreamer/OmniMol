@@ -24,7 +24,7 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 export HUGGINGFACE_HUB_TOKEN="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"
 
 echo "========== Start Training =========="
-deepspeed --hostfile=./ds_hostfile --master_port 29505 train.py \
+deepspeed --master_port 29505 train.py \
     --deepspeed scripts/zero_configs/zero2.json \
     --training_recipe loramoe \
     --use_alpha True \
