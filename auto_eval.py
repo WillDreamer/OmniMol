@@ -302,7 +302,8 @@ def calc_metrics(tokenizer, task, output_path, metric_path, prompt_version):
     
 @torch.inference_mode
 def start_eval(args):
-    wandb.init(name=f"{args.model_path}", project="Omni-Mol-eval")
+    if accelerator.is_main_process:
+        wandb.init(name=f"{args.model_path}", project="Omni-Mol-eval")
     all_ckpts = get_all_ckpts(args.model_path, args.eval_all_epochs)
     for ckpt in all_ckpts:
         logger.info("****************************")
@@ -368,7 +369,8 @@ def start_eval(args):
                     args.prompt_version
                 )
                 for metric in result:
-                    wandb.log({f"{task_name}/{k}": v for k, v in metric.items()}, step=ckpt.split("checkpoint-")[1])    
+                    if accelerator.is_main_process:
+                        wandb.log({f"{task_name}/{k}": v for k, v in metric.items()}, step=ckpt.split("checkpoint-")[1])    
                 
             accelerator.wait_for_everyone()
     
