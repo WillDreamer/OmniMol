@@ -70,6 +70,8 @@ main() {
     cd peft
     pip install -e .
     cd ..
+
+    pip install torch_geometric
     
     pip install torch-scatter==2.1.2
     pip install flash-attn==2.5.0
