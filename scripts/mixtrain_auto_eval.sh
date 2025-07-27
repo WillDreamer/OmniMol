@@ -41,8 +41,8 @@ deepspeed --master_port 29505 train.py \
     --bf16 True \
     --output_dir $CHECKPOINT_FOLDER_PREFIX/$MODEL_VERSION-$REMARK \
     --num_train_epochs 15 \
-    --per_device_train_batch_size 16 \
-    --per_device_eval_batch_size 16 \
+    --per_device_train_batch_size 12 \
+    --per_device_eval_batch_size 12 \
     --gradient_accumulation_steps 1 \
     --stop_epoch 12 \
     --eval_strategy "no" \
