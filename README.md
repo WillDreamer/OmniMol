@@ -82,6 +82,12 @@ Ongoing
 - "complexity"
 - "experiment"
 
+The default setting for `--task_config' is:
+
+```bash
+"forward:1/retrosynthesis:1/reagent:1/homolumo:1/molcap:1/solvent:1/catalyst:1/yield:1/experiment:1/tpsa:1/weight:1/dqa:1/logp:1/iupac:1/textguidedmolgen:1/molediting:1"
+```
+
 
 ## Train
 ### Stage 1 Training of Projector
@@ -97,7 +103,7 @@ To follow the default setting, please run the code with:
 bash scripts/mixtrain_auto_eval.sh
 ```
 
-Actually, we support multiple kinds of training mode in `model_factory.py':
+Actually, we support multiple kinds of training recipe in `model_factory.py':
 
 ```bash 
 MODEL_STAGE_MAP = {
@@ -109,9 +115,68 @@ MODEL_STAGE_MAP = {
 
 ```
 1️⃣ "lora" represents the pure lora mode without MoE expansion
+
 2️⃣ "loramoe" represents our design of MoE + PEFT
+
 3️⃣ "sequential" represents the continual pre-training mode instead of our unified SFT
+
 4️⃣ "puretext" represents the abltion of merging Graph modality into text prompt
+
+
+Here is the explanation of training script arguments：
+
+| Argument | Description |
+|----------|-------------|
+| `--training_recipe` | Specifies the training recipe discussed above. |
+| `--use_alpha` | Enables dynamical scaling used in LoRA. |
+| `--task_config` | Define the task list. |
+| `--model_name_or_path` | Base pretrained language model (e.g., LLaMA 3.2-1B). |
+| `--base_model` | Base model used for initialization (same as `model_name_or_path`). |
+| `--language_backbone_name` | Name or version of the language backbone used in multimodal setup. |
+| `--version` | Prompt format versioning. |
+| `--data_path` | Path to training data. |
+| `--data_type` | Task name or type, used to select data preprocessing logic. |
+| `--graph_tower` | Name of the graph model component (e.g., GNN). |
+| `--mm_projector_type` | Type of multimodal projection layer. |
+| `--graph_init_checkpoint` | Checkpoint path to initialize the GNN. |
+| `--pretrain_mm_mlp_adapter` | Path to a pretrained MLP adapter for multimodal fusion. |
+| `--bf16 True` | Enables bfloat16 precision. |
+| `--output_dir` | Output directory for checkpoints and logs. |
+| `--num_train_epochs` | Number of training epochs. |
+| `--per_device_train_batch_size` | Batch size per GPU for training. |
+| `--per_device_eval_batch_size` | Batch size per GPU for evaluation. |
+| `--gradient_accumulation_steps` | Number of steps to accumulate gradients. |
+| `--stop_epoch` | Training will be stopped early at this epoch. |
+| `--eval_strategy` | Evaluation strategy. |
+| `--eval_steps` | Evaluation interval (not used if eval is disabled). |
+| `--split_eval` | Whether to split evaluation by data subsets. |
+| `--val_ratio` | Ratio of data used for validation. |
+| `--eval_on_start` | If true, performs evaluation before training begins. |
+| `--save_strategy` | Saves model checkpoint at the end of each epoch. |
+| `--save_total_limit` | Maximum number of checkpoints to retain. |
+| `--learning_rate` | Initial learning rate. |
+| `--weight_decay` | No weight decay (regularization). |
+| `--warmup_ratio` | Warm-up proportion for learning rate scheduler. |
+| `--lr_scheduler_type` | Scheduler type; cosine annealing in this case. |
+| `--logging_steps` | Interval for logging metrics. |
+| `--tf32` | Enables TensorFloat-32 on compatible hardware. |
+| `--model_max_length` | Maximum input sequence length. |
+| `--gradient_checkpointing` | Saves memory by checkpointing activations. |
+| `--dataloader_num_workers` | Number of workers for data loading. |
+| `--report_to` | Logging target (e.g., TensorBoard, WandB). |
+| `--logging_dir ` | Directory where training logs are saved. |
+| `--moe_class` | MoE routing class implementation (e.g., from DeepSeek). |
+| `--moe_mode` | Controls which layer(s) apply MoE. |
+| `--ep_size` | Expert parallelism size (used in MoE). |
+| `--num_experts` | Total number of experts in the MoE layer. |
+| `--use_residual` | Enables residual connections in expert mixing. |
+| `--router_aux_loss_coef` | Coefficient for router auxiliary loss in MoE. |
+| `--is_training` | Whether the model is in training mode. |
+| `--top_k_experts` | Number of experts selected per token. |
+| `--use_task_loss` | Whether to include task-specific loss term. |
+| `--ddp_find_unused_parameters` | Disables search for unused parameters in DDP (for efficiency). |
+| `--norm_topk_prob` | Whether to normalize top-k routing probabilities. |
+
 
 
 ## Evaluation
