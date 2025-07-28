@@ -91,20 +91,44 @@ bash scripts/pretrain.sh
 Please refer to `args.py` for detailed parameter explanation.
 
 ### Stage 2 MoE + PEFT
+
+To follow the default setting, please run the code with:
 ```bash 
-bash scripts/mixtrain-moelora.sh
+bash scripts/mixtrain_auto_eval.sh
 ```
+
+Actually, we support multiple kinds of training mode in `model_factory.py':
+
+```bash 
+MODEL_STAGE_MAP = {
+    "lora": create_lora_model,
+    "loramoe": create_lora_moe_model, 
+    "sequential": load_moe_lora_model_sequential,
+    "puretext": create_puer_text_model 
+}
+
+```
+1️⃣ "lora" represents the pure lora mode without MoE expansion
+2️⃣ "loramoe" represents our design of MoE + PEFT
+3️⃣ "sequential" represents the continual pre-training mode instead of our unified SFT
+4️⃣ "puretext" represents the abltion of merging Graph modality into text prompt
+
 
 ## Evaluation
-Basic evaluation
+
+We support distributed inference
+
 ```bash
-bash scripts/eval.sh
+bash scripts/dist_eval_all_epoch.sh
 ```
 
-If you have multiple GPUs, we support distributed inference
-```bash
-bash scripts/dist_eval.sh
+We also support the auto evaluation after training in 
+```bash 
+bash scripts/mixtrain_auto_eval.sh
 ```
+
+Please claim the task for evaluation in `TASK_MAP', and the evaluation mode in `MODEL_LOADER_MAP' with `--model_type' in scripts.
+
 
 ## Citation
 ```bibtex
