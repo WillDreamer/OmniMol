@@ -80,11 +80,7 @@ main() {
     print_step "Installing NLTK and downloading WordNet corpus..."
     pip install nltk
 
-    # 用一次性 Python 进程下载 WordNet（不会污染脚本结构）
-    python - <<'PY'
-            import nltk
-            nltk.download('wordnet')
-            PY
+    python -c "import nltk, sys; nltk.download('wordnet', quiet=True, raise_on_error=True)"
     # === END NEW ===
 
     sudo apt install -y tmux
