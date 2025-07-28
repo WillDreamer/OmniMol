@@ -84,7 +84,7 @@ The default setting for `--task_config' is:
 
 
 ## Train
-### (Optional) Stage 1: Pre-training of Multi-modal Projector
+### Stage 1: Pre-training of Multi-modal Projector (Optional) 
 
 ```bash
 bash scripts/pretrain.sh
