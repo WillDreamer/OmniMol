@@ -18,13 +18,13 @@ Building generalist models has recently demonstrated remarkable capabilities in 
 - [x] 纯text训练开发
 - [x] 环境一键配置
 
-[2025/2/8] 🔥 We release our first version of code
+[2025/07/28] 🔥 We release our first version of code
 
 ## Environment Setup
 1. Clone the repository and `cd` to the folder
 
 ```bash
-git clone https://github.com/WillDreamer/OmniMol.git
+git clone https://github.com/xxxxxxxx/OmniMol.git
 
 cd OmniMol
 ```
@@ -61,7 +61,7 @@ bash setup_omnimol.sh
 ```
 
 ## Weights
-Ongoing
+We provide the checkpoints of Omni-Mol reported in main table, please just xxxx
 
 ## Dataset
 ### Task list
@@ -90,13 +90,14 @@ The default setting for `--task_config' is:
 
 
 ## Train
-### Stage 1 Training of Projector
+### (Optional) Stage 1: Pre-training of Multi-modal Projector
+
 ```bash
 bash scripts/pretrain.sh
 ```
-Please refer to `args.py` for detailed parameter explanation.
+or you can just utilize our provided `mm_projector.bin' which is automatically downloaded if you run `setup_omnimol.sh`.
 
-### Stage 2 MoE + PEFT
+### Stage 2: MoE + PEFT 
 
 To follow the default setting, please run the code with:
 ```bash 
@@ -123,7 +124,7 @@ MODEL_STAGE_MAP = {
 4️⃣ "puretext" represents the abltion of merging Graph modality into text prompt
 
 
-Here is the explanation of training script arguments：
+### Explanation of Training Script Arguments
 
 | Argument | Description |
 |----------|-------------|
@@ -177,33 +178,23 @@ Here is the explanation of training script arguments：
 | `--ddp_find_unused_parameters` | Disables search for unused parameters in DDP (for efficiency). |
 | `--norm_topk_prob` | Whether to normalize top-k routing probabilities. |
 
-
+More details can be found in `args.py'.
 
 ## Evaluation
 
-We support distributed inference
+We support the auto evaluation after training in 
+
+```bash 
+bash scripts/mixtrain_auto_eval.sh
+```
+
+We also support separate evaluation with distributed inference
 
 ```bash
 bash scripts/dist_eval_all_epoch.sh
 ```
 
-We also support the auto evaluation after training in 
-```bash 
-bash scripts/mixtrain_auto_eval.sh
-```
 
 Please claim the task for evaluation in `TASK_MAP', and the evaluation mode in `MODEL_LOADER_MAP' with `--model_type' in scripts.
 
 
-## Citation
-```bibtex
-@misc{hu2025omnimol,
-      title={Omni-Mol: Exploring Universal Convergent Space for Omni-Molecular Tasks}, 
-      author={Chengxin Hu and Hao Li and Yihe Yuan and Zezheng Song and Haixin Wang},
-      year={2025},
-      eprint={2502.01074},
-      archivePrefix={arXiv},
-      primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2502.01074}, 
-}
-```
