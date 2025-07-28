@@ -244,12 +244,12 @@ MAP2FILEMAME = {
     "solvent": "solvent",
     "catalyst": "catalyst",
     "yield": "yields_regression",
-    "experiment": "exp_procedure_pred_0.5subset",
+    "experiment": "exp_procedure_pred",
     "tpsa": "3d_moit",
     "weight": "3d_moit",
     "dqa": "3d_moit",
     "logp": "3d_moit",
-    "iupac": "iupac_0.2subset",
+    "iupac": "iupac2selfies",
     "textguidedmolgen": "text_guided",
     "molediting": "molecule_editing"
 }
