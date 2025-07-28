@@ -85,7 +85,7 @@ echo "========== Training Finished =========="
 echo "========== Start Evaluation =========="
 
 accelerate launch --main_process_port 29533 auto_eval.py \
-    --save_path eval_results/ \
+    --save_path eval_results/$MODEL_VERSION-$REMARK/ \
     --device cuda \
     --temperature 0.2 \
     --num_beams 1 \
