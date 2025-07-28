@@ -239,7 +239,7 @@ MAP2FILEMAME = {
     "forward": "forward",
     "reagent": "reagent",
     "retrosynthesis": "retrosynthesis",
-    "molcap": "molcap_train",
+    "molcap": "molcap_test",
     "homolumo": "property",
     "solvent": "solvent",
     "catalyst": "catalyst",
