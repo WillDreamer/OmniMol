@@ -38,6 +38,7 @@ from typing import Sequence, Dict, Tuple, List
 from dataclasses import dataclass, field
 from helpers import save_json
 import wandb
+from accelerate.utils import gather_object, InitProcessGroupKwargs
 
 from datetime import timedelta 
 
@@ -244,12 +245,12 @@ MAP2FILEMAME = {
     "solvent": "solvent",
     "catalyst": "catalyst",
     "yield": "yields_regression",
-    "experiment": "exp_procedure_pred",
+    "experiment": "exp_procedure_pred_0.5subset",
     "tpsa": "3d_moit",
     "weight": "3d_moit",
     "dqa": "3d_moit",
     "logp": "3d_moit",
-    "iupac": "iupac2selfies",
+    "iupac": "iupac_0.2subset",
     "textguidedmolgen": "text_guided",
     "molediting": "molecule_editing"
 }
@@ -352,23 +353,28 @@ def start_eval(args):
                 for_test=True
             )
             loader = DataLoader(dataset, batch_size=1, shuffle=False, collate_fn=GraphEvalCollator(tokenizer), drop_last=False)
-            output = evaluation_loop(
-                model,
-                tokenizer,
-                loader,
-                args.device,
-                args.temperature,
-                args.top_p,
-                args.num_beams,
-                args.max_new_tokens,
-                args.repetition_penalty,
-                generation_config
-            )
-            if accelerator.is_main_process:
-                if not os.path.exists(args.save_path):
-                    os.makedirs(args.save_path)
-                file_path = os.path.join(args.save_path, f"{task_name}_results.json")
+            
+            if not os.path.exists(args.save_path):
+                os.makedirs(args.save_path)
+            file_path = os.path.join(args.save_path, f"{task_name}_results.json")
+            if os.path.exists(file_path):
+                logger.info(f"Results for {task_name} already exists, skipping evaluation...")
+            else:
+                output = evaluation_loop(
+                    model,
+                    tokenizer,
+                    loader,
+                    args.device,
+                    args.temperature,
+                    args.top_p,
+                    args.num_beams,
+                    args.max_new_tokens,
+                    args.repetition_penalty,
+                    generation_config
+                )
                 save_json(output, file_path)
+            if accelerator.is_main_process:
+                
                 result = calc_metrics(
                     tokenizer, 
                     task_name,
@@ -379,7 +385,8 @@ def start_eval(args):
                 for metric in result:
                     if accelerator.is_main_process:
                         wandb.log({f"{task_name}/{k}": v for k, v in metric.items()}, step=int(ckpt.split("checkpoint-")[1]))    
-                
+                        
+                            
             accelerator.wait_for_everyone()
     
     
