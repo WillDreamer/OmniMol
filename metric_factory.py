@@ -557,14 +557,11 @@ def calc_mocap_metrics(input_file, metric_path, eos_token, tokenizer: PreTrained
     # cids = [log['cid'] for i,log in enumerate(json.load(open(input_file, "r"))) if i in idxes]
     # cids.sort(key=lambda x: int(x))
 
-    final = {
-        "BLEU-2": bleu2,
-        "BLEU-4": bleu4,
-        "Meteor": np.mean(meteor_scores),
-        "ROUGE-1": np.mean([rs['rouge1'].fmeasure for rs in rouge_scores]),
-        "ROUGE-2": np.mean([rs['rouge2'].fmeasure for rs in rouge_scores]),
-        "ROUGE-L": np.mean([rs['rougeL'].fmeasure for rs in rouge_scores]),
-    }
+    final = [{"BLEU-2": bleu2},{"BLEU-4": bleu4},
+        {"Meteor": np.mean(meteor_scores)},
+        {"ROUGE-1": np.mean([rs['rouge1'].fmeasure for rs in rouge_scores])},
+        {"ROUGE-2": np.mean([rs['rouge2'].fmeasure for rs in rouge_scores])},
+        {"ROUGE-L": np.mean([rs['rougeL'].fmeasure for rs in rouge_scores])}]
     with open(metric_path, 'w', encoding='utf-8') as f:
         json.dump(final, f, indent=4, ensure_ascii=False)
         f.close()
@@ -666,19 +663,19 @@ def calc_exp_metrics(input_file, metric_path, eos_token, tokenizer: PreTrainedTo
     # cids = [log['cid'] for i,log in enumerate(json.load(open(input_file, "r"))) if i in idxes]
     # cids.sort(key=lambda x: int(x))
 
-    final = {
-        "Validity": validity,
-        "Accuracy (100)": acc_100,
-        "Accuracy (90)": acc_90,
-        "Accuracy (75)": acc_75,
-        "Accuracy (50)": acc_50,
-        "BLEU-2": bleu2,
-        "BLEU-4": bleu4,
-        "Meteor": np.mean(meteor_scores),
-        "ROUGE-1": np.mean([rs['rouge1'].fmeasure for rs in rouge_scores]),
-        "ROUGE-2": np.mean([rs['rouge2'].fmeasure for rs in rouge_scores]),
-        "ROUGE-L": np.mean([rs['rougeL'].fmeasure for rs in rouge_scores]),
-    }
+    final = [
+        {"Validity": validity},
+        {"Accuracy (100)": acc_100},
+        {"Accuracy (90)": acc_90},
+        {"Accuracy (75)": acc_75},
+        {"Accuracy (50)": acc_50},
+        {"BLEU-2": bleu2},
+        {"BLEU-4": bleu4},
+        {"Meteor": np.mean(meteor_scores)},
+        {"ROUGE-1": np.mean([rs['rouge1'].fmeasure for rs in rouge_scores])},
+        {"ROUGE-2": np.mean([rs['rouge2'].fmeasure for rs in rouge_scores])},
+        {"ROUGE-L": np.mean([rs['rougeL'].fmeasure for rs in rouge_scores])},
+    ]
     print('Final:', final)
     with open(metric_path, 'w', encoding='utf-8') as f:
         json.dump(final, f, indent=4, ensure_ascii=False)
@@ -717,11 +714,11 @@ def calc_iupac_metrics(input_file, metric_path, eos_token, tokenizer: PreTrained
 
     acc /= cnt
 
-    final = {
-        "BLEU-2": bleu2,
-        "BLEU-4": bleu4,
-        "Accuracy": acc
-    }
+    final = [
+        {"BLEU-2": bleu2},
+        {"BLEU-4": bleu4},
+        {"Accuracy": acc}
+    ]
     with open(metric_path, 'w', encoding='utf-8') as f:
         json.dump(final, f, indent=4, ensure_ascii=False)
         f.close()
