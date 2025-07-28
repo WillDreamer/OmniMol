@@ -279,7 +279,7 @@ def calc_metrics(tokenizer, task, output_path, metric_path, prompt_version):
         
     if task in ["forward", "reagent", "retrosynthesis", "solvent", "catalyst", "iupac","textguidedmolgen","molediting"]:
         result = calc_mol_trans(output_path, metric_path, EOS_MAP[prompt_version])
-        result = calc_fingerprints(output_path, metric_path, eos_token=EOS_MAP[prompt_version])
+        result += calc_fingerprints(output_path, metric_path, eos_token=EOS_MAP[prompt_version])
     # from transformers import AutoTokenizer
     # tokenizer = AutoTokenizer.from_pretrained(args.language_backbone)
 
