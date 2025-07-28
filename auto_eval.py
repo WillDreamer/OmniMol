@@ -39,7 +39,12 @@ from dataclasses import dataclass, field
 from helpers import save_json
 import wandb
 
-accelerator = Accelerator()
+from datetime import timedelta 
+
+local_rank = os.environ.get("LOCAL_RANK", -1)
+if int(local_rank) != -1:
+    kwargs = InitProcessGroupKwargs(timeout=timedelta(seconds=36000))
+    accelerator = Accelerator(kwargs_handlers=[kwargs])
 logger = WrappedLogger(__name__)
 
 @dataclass       
