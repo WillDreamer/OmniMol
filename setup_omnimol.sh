@@ -76,6 +76,17 @@ main() {
     pip install torch-scatter==2.1.2
     pip install flash-attn==2.5.0
 
+    # === NEW: install NLTK and download WordNet ===
+    print_step "Installing NLTK and downloading WordNet corpus..."
+    pip install nltk
+
+    # 用一次性 Python 进程下载 WordNet（不会污染脚本结构）
+    python - <<'PY'
+            import nltk
+            nltk.download('wordnet')
+            PY
+    # === END NEW ===
+
     sudo apt install -y tmux
     
     # Install PyTorch with CUDA if available
